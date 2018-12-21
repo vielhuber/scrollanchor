@@ -7,12 +7,11 @@
     margin: 0;
     padding: 0;
 }
-
 .navigation {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    right:0;
     height: 100px;
     background-color: red;
     z-index: 42;
@@ -36,4 +35,24 @@
 }
 .module--3 {
     background-color: cyan;
+}
+
+
+/* test with container */
+.container
+{
+    position:absolute;
+    top:25%;
+    bottom:25%;
+    right:25%;
+    left:25%;
+    border:1px solid #000;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    z-index:43;
+}
+.navigation {
+    top:25%;
+    left:25%;
+    right:25%;
 }

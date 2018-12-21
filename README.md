@@ -12,7 +12,7 @@ copy the dependency free [script.js](https://github.com/vielhuber/scrollanchor/b
 import ScrollAnchor from './scrollanchor';
 window.addEventListener('load', e => {
     new ScrollAnchor({
-        scrollContainer: window,
+        scrollContainer: null,
         scrollOffset: '.navigation',
         targetAttribute: 'data-scrollanchor-target',
         activeClass: 'scrollanchor__link--active'

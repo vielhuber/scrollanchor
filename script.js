@@ -29,46 +29,47 @@ export default class ScrollAnchor {
         }
     }
     bindActiveStates() {
-        window.addEventListener('scroll', () => {
-            if (document.querySelector('[' + this.targetAttribute + ']') !== null) {
-                let done = false;
-                document.querySelectorAll('[' + this.targetAttribute + ']').forEach(el => {
-                    if (done === true) {
-                        return;
-                    }
-                    let offset = this.offsetTop(el),
-                        origin = document.querySelector(
-                            '[href*="' + el.getAttribute(this.targetAttribute) + '"]'
-                        );
-                    if (
-                        offset >= this.scrollTop() &&
-                        offset <= this.scrollTop() + window.innerHeight &&
-                        origin !== null
-                    ) {
-                        if (document.querySelector('.' + this.activeClass) !== null) {
-                            document.querySelectorAll('.' + this.activeClass).forEach(el2 => {
-                                if (origin !== el2) {
-                                    el2.classList.remove(this.activeClass);
-                                }
-                            });
-                        }
-                        origin.classList.add(this.activeClass);
-                        done = true;
-                    }
-                });
-            }
+        resetActiveStates();
+        this.updateActiveStates();
+        this.getContainer().addEventListener('scroll', () => {
+            this.updateActiveStates();
         });
     }
-    offsetTop(el) {
-        return (
-            el.getBoundingClientRect().top + window.pageYOffset - document.documentElement.clientTop
-        );
+    resetActiveStates() {
+        if (document.querySelector('.' + this.activeClass) !== null) {
+            document.querySelectorAll('.' + this.activeClass).forEach((el) => {
+                el.classList.remove(this.activeClass);
+            });
+        }
     }
-    scrollTop() {
-        return (
-            (document.documentElement && document.documentElement.scrollTop) ||
-            document.body.scrollTop
-        );
+    updateActiveStates() {
+        if (document.querySelector('[' + this.targetAttribute + ']') !== null) {
+            let done = false;
+            document.querySelectorAll('[' + this.targetAttribute + ']').forEach(el => {
+                if (done === true) {
+                    return;
+                }
+                let offset = this.offsetTop(el),
+                    origin = document.querySelector(
+                        '[href*="' + el.getAttribute(this.targetAttribute) + '"]'
+                    );
+                if (
+                    offset >= this.scrollTop() &&
+                    offset <= this.scrollTop() + this.windowHeight() &&
+                    origin !== null
+                ) {
+                    if (document.querySelector('.' + this.activeClass) !== null) {
+                        document.querySelectorAll('.' + this.activeClass).forEach(el2 => {
+                            if (origin !== el2) {
+                                el2.classList.remove(this.activeClass);
+                            }
+                        });
+                    }
+                    origin.classList.add(this.activeClass);
+                    done = true;
+                }
+            });
+        }
     }
     bindLinks() {
         document.documentElement.addEventListener('click', e => {
@@ -101,7 +102,9 @@ export default class ScrollAnchor {
         } else if (window.location.hash) {
             let hash = window.location.hash.replace('#', '');
             this.removeHashFromUrl();
-            this.scrollTo(hash);
+            requestAnimationFrame(() => {
+                this.scrollTo(hash);
+            });
         }
     }
     scrollTo(id) {
@@ -109,24 +112,58 @@ export default class ScrollAnchor {
         if (target === null) {
             return;
         }
-        let container = window,
-            offset = 0;
-        if (this.scrollContainer !== null && this.scrollContainer !== window) {
-            container = document.querySelector(container);
-            offset =
-                container.getBoundingClientRect().top +
+        let top = this.offsetTop(target);
+        let container = this.getContainer();
+        if (this.scrollOffset !== null && document.querySelector(this.scrollOffset) !== null) {
+            top -= document.querySelector(this.scrollOffset).offsetHeight;
+        }
+        container.scroll({ top: top, left: 0, behavior: 'smooth' });
+    }
+    getContainer() {
+        if (this.scrollContainer !== null && this.scrollContainer != window) {
+            return document.querySelector(this.scrollContainer);
+        }
+        return window;
+    }
+    windowHeight()
+    {
+        if (this.scrollContainer !== null) {
+            return this.getContainer().offsetHeight;
+        }
+        else {
+            return window.innerHeight;
+        }
+    }
+    offsetTop(el) {
+        let val;
+        if (this.scrollContainer !== null) {
+            // offset of element inside container
+            val =
+                el.getBoundingClientRect().top +
+                this.getContainer().scrollTop -
+                document.documentElement.clientTop;
+            // offset of container
+            val -=
+                this.getContainer().getBoundingClientRect().top +
+                window.pageYOffset -
+                document.documentElement.clientTop;
+        } else {
+            val =
+                el.getBoundingClientRect().top +
                 window.pageYOffset -
                 document.documentElement.clientTop;
         }
-        if (this.scrollOffset !== null && document.querySelector(this.scrollOffset) !== null) {
-            offset += document.querySelector(this.scrollOffset).offsetHeight;
+        return val;
+    }
+    scrollTop() {
+        if (this.scrollContainer !== null) {
+            return this.getContainer().scrollTop;
+        } else {
+            return (
+                (document.documentElement && document.documentElement.scrollTop) ||
+                document.body.scrollTop
+            );
         }
-        let top =
-            target.getBoundingClientRect().top +
-            container.pageYOffset -
-            document.documentElement.clientTop -
-            offset;
-        container.scroll({ top: top, left: 0, behavior: 'smooth' });
     }
     isLinkInternal(href) {
         if (href.indexOf(window.location.protocol + '//' + window.location.host) > -1) {
@@ -155,7 +192,7 @@ export default class ScrollAnchor {
 }
 window.addEventListener('load', e => {
     new ScrollAnchor({
-        scrollContainer: window,
+        scrollContainer: '.container',
         scrollOffset: '.navigation',
         targetAttribute: 'data-scrollanchor-target',
         activeClass: 'scrollanchor__link--active'
