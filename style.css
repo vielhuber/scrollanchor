@@ -1,0 +1,39 @@
+*,
+*:before,
+*:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: red;
+    z-index: 42;
+}
+.scrollanchor__link--active {
+    background-color: green;
+}
+.modules {
+    margin-top: 100px;
+}
+.module {
+    position: relative;
+    width: 100%;
+    height: 75vh;
+}
+.module--1 {
+    background-color: blue;
+}
+.module--2 {
+    background-color: yellow;
+}
+.module--3 {
+    background-color: cyan;
+}
