@@ -4,7 +4,7 @@ scrollanchor handles (cross-page) anchor scroll links including active states.
 
 ## installation
 
-copy the dependency free [script.js](https://getcomposer.org/) and adjust it to your needs.
+copy the dependency free [script.js](https://github.com/vielhuber/scrollanchor/blob/master/script.js) and adjust it to your needs.
 
 ## usage
 
