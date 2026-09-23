@@ -29,7 +29,7 @@ export default class ScrollAnchor {
         }
     }
     bindActiveStates() {
-        resetActiveStates();
+        this.resetActiveStates();
         this.updateActiveStates();
         this.getContainer().addEventListener('scroll', () => {
             this.updateActiveStates();
