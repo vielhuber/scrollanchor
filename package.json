@@ -8,12 +8,12 @@
         "smoothscroll-polyfill": "^0.4.4"
     },
     "name": "boilerplate",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "main": "script.js",
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "vite": "^8.3.0"
+        "vite": "^8.3.5"
     }
 }
